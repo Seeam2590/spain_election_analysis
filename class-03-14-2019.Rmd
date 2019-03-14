@@ -1,0 +1,34 @@
+---
+title: "Class 03-14-2019"
+author: "Seeam S. Noor"
+date: "March 14, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+
+x <- read_csv("https://pollofpolls.eu/get/polls/ES-parliament/format/csv")
+```
+
+```{r polling}
+# Make a list of firms with at least 40 polls
+
+good_firms <- x %>% 
+  group_by(firm) %>% 
+  summarize(number = n()) %>% 
+  ungroup() %>% 
+  filter(number >= 40) %>% 
+  pull(firm)
+  
+# Figure out date a year ago
+  
+# Filter out data that we want to use and send it to the plot.
+
+x %>% 
+  filter(firm %in% good_firms) %>% 
+  filter(date > Sys.Date() - 365)
+  
+```
