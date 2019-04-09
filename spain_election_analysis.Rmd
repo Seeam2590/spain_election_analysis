@@ -17,20 +17,27 @@ x <- read_csv("https://pollofpolls.eu/get/polls/ES-parliament/format/csv")
 ```{r polling, echo = FALSE, warning = FALSE}
 # Make a list of firms with at least 40 polls
 good_firms <- x %>% 
+  # Grouping by firms
   group_by(firm) %>% 
+  # Summarizing number of entries for each firm 
   summarize(number = n()) %>% 
   ungroup() %>% 
+  # Taking firms which have over 40 entries
   filter(number >= 40) %>% 
   pull(firm)
   
 # Plotting party percentage support with data taken from only good firms
 x %>% 
   filter(firm %in% good_firms) %>% 
+  # Considerinf data only from the past year
   filter(date > Sys.Date() - 365) %>%
+  # Removing the columns we don't need
   select(-c(source, sd)) %>%
+  # Turning the data frame into the appropriate shape we need
   gather(key = party, value = value, PP, PSOE, Cs, VOX, Podemos) %>%
   ggplot(aes(x = date, y = value, color = party)) +
   geom_point() + 
+  # Drawing a line of best fit through the data
   geom_smooth(se = FALSE, method = "loess", na.rm = TRUE) +
   labs(x = NULL, y = "Percentage Support", title = "Polling in Advance of Spanish Election on April 28",
        subtitle = "Popular support for VOX surges over last year", caption = "Data source: Poll of polls")
