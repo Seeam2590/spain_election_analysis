@@ -16,7 +16,6 @@ x <- read_csv("https://pollofpolls.eu/get/polls/ES-parliament/format/csv")
 
 ```{r polling, echo = FALSE, warning = FALSE}
 # Make a list of firms with at least 40 polls
-
 good_firms <- x %>% 
   group_by(firm) %>% 
   summarize(number = n()) %>% 
@@ -24,10 +23,7 @@ good_firms <- x %>%
   filter(number >= 40) %>% 
   pull(firm)
   
-# Figure out date a year ago
-  
-# Filter out data that we want to use and send it to the plot.
-
+# Plotting party percentage support with data taken from only good firms
 x %>% 
   filter(firm %in% good_firms) %>% 
   filter(date > Sys.Date() - 365) %>%
@@ -57,7 +53,9 @@ data <-
   spread(key = party, value = avg_poll) %>%
   ungroup()
 
+# Using ployly for interactive plots
 plot <- plot_ly(data, x = ~date, y = ~PP, name = 'PP', type = 'scatter', mode = 'lines+markers') %>%
+  # Adding traces for diferent parties
   add_trace(y = ~PSOE, name = 'PSOE', mode = 'lines+markers') %>%
   add_trace(y = ~Cs, name = 'CS', mode = 'lines+markers') %>%
   add_trace(y = ~VOX, name = 'VOX', mode = 'lines+markers') %>%
